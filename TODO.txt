@@ -1,0 +1,15 @@
+﻿FEHLER
+
+[ ] ...
+
+
+FEATURES
+
+[ ] Hochskaliertes Bild per NaCl generieren; Schaltflächen in Variationen vereinheitlichen.
+
+[ ] Für hochskaliertes Bild kein Fesnter mehr öffnen, sondern in Overlay darstellen (siehe NaCl-Code).
+
+EXPERIMENTE
+
+[ ] ...
+

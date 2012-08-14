@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Qbist 2.0</title>
+<!--
+    Copyright (c) 2012 Oliver Lau. All rights reserved.
+    $Id: qbist.html 2a9d4475069f 2012/04/23 09:26:48 Oliver Lau <oliver@von-und-fuer-lau.de> $
+ -->
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+<meta http-equiv="content-language" content="de" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link media="screen" type="text/css" rel="stylesheet" href="base.css" />
+<link media="screen" type="text/css" rel="stylesheet" href="qbist.css" />
+<script type="text/javascript" src="http://yandex.st/dojo/1.7.1/dojo/dojo.js"></script>
+<script charset="utf-8" type="text/javascript" src="helper.js"></script>
+<script charset="utf-8" type="text/javascript" src="webgl-utils.js"></script>
+<script charset="utf-8" type="text/javascript" src="colorspace.js"></script>
+<script charset="utf-8" type="text/javascript" src="drawoncanvas.js"></script>
+<script charset="utf-8" type="text/javascript" src="qbist.js"></script>
+<link rel="icon" href="favicon.png" type="image/png" />
+<script id="shader-fs" type="x-shader/x-fragment"></script>
+<script id="shader-vs" type="x-shader/x-vertex"></script>
+</head>
+<body>
+     <div id="body">
+     <div id="controller">
+        <a class="title" title="Zur Startseite" href="index.html">Qbist 2.0</a>
+        <span style="white-space:nowrap">
+        Skaliertes Bild hat
+        <input onkeyup="Qbist.SetImageWidth(this.value)" type="text" size="4" value="640" style="text-align: right" id="width" />&nbsp;px
+        &times;
+        <input onkeyup="Qbist.SetImageHeight(this.value)" type="text" size="4" value="640" style="text-align: right" id="height" />&nbsp;px
+        </span>
+        |
+        <span style="white-space:nowrap;display:none" id="threadselector">
+        <select id="threadcount">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4" selected="selected">4</option>
+            <option value="8">8</option>
+        </select>&nbsp;Threads
+        |
+        </span>
+        <span style="white-space:nowrap">
+        Abweichungen:
+        <select id="variance">
+            <option value="0">sehr gering</option>
+            <option value="1">gering</option>
+            <option value="2" selected="selected">mittel</option>
+            <option value="3">hoch</option>
+            <option value="4">sehr hoch</option>
+            <option value="8">extrem</option>
+            <option value="16">ohne Worte</option>
+        </select>
+        </span>
+        |
+        <span style="white-space:nowrap; display:none" id="overlaymethodchooser">
+        Filter:
+        <select id="overlaymethod" onchange="Qbist.PostToAllModules()">
+            <option value="overwrite" selected="selected" title="berechnete Daten überschreiben Pixelbild">überschreiben</option>
+            <option value="copy" title="Transformationsregister werden ausschließlich mit den Farbinformationen aus dem Pixelbild vorbelegt">kopieren</option>
+            <option value="multiply">multiplizieren</option>
+            <option value="add">addieren</option>
+            <option value="subtract">subtrahieren</option>
+        </select>
+        |
+        </span>
+        <button onclick="Qbist.Restart(); return false" title="alle Einstellungen zurücksetzen">zurücksetzen</button>
+        <span style="white-space:nowrap">
+        <button onclick="Qbist.Previous(); return false" id="history_prev">&lt;</button>
+        <button onclick="Qbist.Next(); return false" id="history_next">&gt;</button>
+        </span>
+    </div>
+    <div id="showroom"></div>
+    <div id="importexport">
+            Folgende JSON-Daten für Transformation
+            <button id="importbutton" onclick="Qbist.Import(dojo.byId('console').value); Qbist.ResetHighlightSelection(); return false">importieren</button>
+            <br />
+            <textarea cols="80" rows="2" id="console"></textarea>
+            <br />
+            <span style="white-space:nowrap">Transformation <select id="highlightselector"></select>
+            <button id="deletebutton" onclick="var select = dojo.byId('highlightselector'); Qbist.Remove(select.options[select.selectedIndex].innerHTML)">löschen</button></span>
+            |
+            <span style="white-space:nowrap">unter <input type="text" placeholder="Name" value="" size="20" id="highlightname" /> <button id="savebutton" onclick="Qbist.Store(dojo.byId('highlightname').value, dojo.byId('console').value)">lokal sichern</button></span>
+            |
+            <span style="white-space:nowrap">alle <button id="exportallbutton" onclick="Qbist.DownloadAll()">herunterladen</button></span>
+    </div>
+    
+    <div id="footer">
+        <button onclick="Qbist.Benchmark();">Benchmark</button>
+        <a href="http://www.heise.de/artikel-archiv/ct/1995/10/326_kiosk" target="_blank">Idee</a> und Originalcode &copy;&nbsp;1995 <a href="http://www.j3l7h.de/" target="_blank">Jörn Loviscach</a>.
+        Portierung auf <a href="http://dev.w3.org/html5/workers/" target="_blank">Web Worker</a>, <a href="http://gonacl.com/" target="_blank">NaCl</a> und <a href="http://www.khronos.org/webgl/" target="_blank">WebGL</a> &copy;&nbsp;2012 <a href="http://von-und-fuer-lau.de/">Oliver Lau</a>.
+        |
+        <span id="mode" title="Betriebsart"></span>
+        |
+        <span id="time"></span>
+
+        <div class="g-plusone" data-size="small" data-annotation="none" data-href="http://von-und-fuer-lau.de/qbist/"></div>
+        <div class="fb-like" data-href="http://von-und-fuer-lau.de/qbist/" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-action="recommend" data-colorscheme="dark" data-font="arial"></div>
+    </div>
+    </div>
+    <div id="pictureoverlay" style="display:none"></div>
+    <div id="bigloader" style="display:none">
+        <p>Berechnung läuft&nbsp;&hellip;</p>
+        <p style="margin-top: 15px; margin-bottom: 15px"><img alt="Bitte warten..." title="Bitte warten..." src="loader-icon-66x66.png" width="66" height="66" /></p>
+        <p>Bild wird in neuem Fenster geöffnet</p>
+    </div>
+    <div id="hiddencanvascontainer"></div>
+    <div id="fb-root"></div>
+
+</body>
+</html>

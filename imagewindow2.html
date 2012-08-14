@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Qbist 2.0 | Hochskalierte Variation wird berechnet ...</title>
+<meta http-equiv="content-language" content="de">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<!--
+    Copyright (c) 2012 Oliver Lau. All rights reserved.
+    $Id: imagewindow2.html 13416c0d9f92 2012/02/24 14:46:22 Oliver Lau <oliver@von-und-fuer-lau.de> $
+ -->
+<link type="text/css" rel="stylesheet" href="qbist.css" />
+<link rel="icon" href="favicon.png" type="image/png" />
+<script type="text/javascript">
+window.addEventListener('load', function() {
+        var canvas = window.opener.document.getElementById('bigcanvas');
+        canvas.style.display = 'block';
+        document.body.appendChild(canvas);
+        document.title = 'Qbist 2.0 | Hochskalierte '.concat(canvas.title);
+    });
+</script>
+</head>
+<body>
+</body>
+</html>

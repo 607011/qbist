@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Qbist 2.0</title>
+<!--
+    Copyright (c) 2012 Oliver Lau. All rights reserved.
+    $Id: index.html 98feffa143a5 2012/04/24 12:20:32 Oliver Lau <oliver@von-und-fuer-lau.de> $
+ -->
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+<meta http-equiv="content-language" content="de" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link media="screen" type="text/css" rel="stylesheet" href="base.css" />
+<link type="text/css" rel="stylesheet" href="qbist.css" />
+<script type="text/javascript" src="http://yandex.st/dojo/1.7.1/dojo/dojo.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+<script type="text/javascript" src="helper.js"></script>
+<link rel="icon" href="favicon.png" type="image/png" />
+<style type="text/css">
+html, body
+{
+    margin: auto;
+    width: auto;
+    padding: 1ex 1em;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.8);
+}
+#featurelist
+{
+	margin: 3ex 2px 3ex 2px;
+}
+td
+{
+	padding: 2ex 1em;
+}
+td > a
+{
+	display: inline-block;
+	width: 128px;
+	height: 128px;
+	border: 1px solid #aaa;
+	margin: 5px 7px;
+	padding: 2ex 0.5em;
+	text-align: center;
+	color: #fff;
+	cursor: pointer;
+	border-radius: 10px;
+	box-shadow: 0px 0px 6px #ccc;
+}
+td > a:visited
+{
+	color: #fff;
+}
+td > a:hover
+{
+	border: 1px solid #ccc;
+	box-shadow: 0px 0px 9px #fff;
+	text-decoration: none;
+}
+</style>
+<script type="text/javascript">
+function main() {
+    var feature = [
+        {
+            name: 'JavaScript',
+            enabled: true,
+            style: 'background-color: rgba(171, 77, 77, 0.5)',
+            params: [ 'nacl=off', 'webgl=off', 'worker=off' ]
+        },
+        {
+            name: 'Web Worker',
+            enabled: Feature.WebWorker,
+            style: 'background-color: rgba(77, 171, 171, 0.5)',
+            params: [ 'nacl=off', 'webgl=off' ]
+        },
+        {
+            name: 'Native Client',
+            enabled: Feature.NaCl,
+            style: 'background-color: rgba(93, 171, 77, 0.5)',
+            params: [ 'webgl=off' ]
+        },
+        {
+            name: 'WebGL',
+            enabled: Feature.WebGL,
+            style: 'background-color: rgba(171, 171, 77, 0.5)',
+            params: [ 'nacl=off' ]
+        }
+    ];
+    var list = dojo.byId('featurelist');
+    var featureCount = 0;
+    for (var i = 0; i < feature.length; ++i) {
+        if (feature[i].enabled) {
+            ++featureCount;
+            var a = dojo.create('a');
+            a.innerHTML = feature[i].name;
+            a.title = feature[i].params;
+            a.setAttribute('style', feature[i].style);
+            a.href = 'qbist.html?' + feature[i].params.join('&');
+            list.appendChild(a);
+        }
+    }
+    if (featureCount == 0) {
+        document.location.href = 'badbadbad.html';
+    }
+    else if (featureCount > 1) {
+        dojo.byId('plural').innerHTML = 'en';
+    }
+}
+
+window.addEventListener('load', function() {
+        Feature.CheckAll();
+        main();
+    });
+</script>
+</head>
+<body>
+<center>
+    <table style="text-align: center;">
+        <tr>
+            <td class="title">Qbist 2.0</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid #999; padding-top: 3ex; padding-bottom: 1ex;">Ihr Browser unterstützt folgende Betriebsart<span id="plural"></span></td>
+        </tr>
+        <tr>
+            <td id="featurelist"></td>
+        </tr>
+        <tr>
+            <td style="border-top: 1px solid #999; padding-top: 1ex;">Starten mit Klick auf Kachel</td>
+        </tr>
+    </table>
+    <p style="margin-top: 7ex"><a href="help.html"><strong>Worum geht es hier?</strong></a></p>
+</center>
+</body>
+</html>

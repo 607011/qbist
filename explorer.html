@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Qbist 2.0 | Explorer</title>
+<meta http-equiv="content-language" content="de">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<!--
+    Copyright (c) 2012 Oliver Lau. All rights reserved.
+    $Id: explorer.html 13416c0d9f92 2012/02/24 14:46:22 Oliver Lau <oliver@von-und-fuer-lau.de> $
+ -->
+<link type="text/css" rel="stylesheet" href="qbist.css" />
+<script type="text/javascript" src="http://yandex.st/dojo/1.7.1/dojo/dojo.js"></script>
+<link rel="icon" href="favicon.png" type="image/png" />
+<style type="text/css">
+#toast
+{
+	display: none;
+	position: absolute;
+	width: 200px;
+	height: 150px;
+	background-color: rgba(0, 0, 0, 0.85);
+	border: 1px solid rgba(200, 200, 200, 0.85);
+	border-radius: 10px;
+	color: #fff;
+	opacity: 0;
+	padding: 5ex 1em;
+	text-align: center;
+	overflow: auto;
+	font-family: Arial, sans-serif;
+	cursor: pointer;
+}
+#toast:hover
+{
+	background-color: rgba(30, 30, 30, 0.85);
+	border: 1px solid rgba(255, 255, 255, 0.85);
+}
+#toast p
+{
+	margin-bottom: 2ex;
+}
+</style>
+<script type="text/javascript">
+dojo.require("dojo.window");
+dojo.require("dojo.fx");
+dojo.ready(function() {
+        var canvas = window.opener.document.getElementById('bigcanvas');
+        canvas.className = 'canvas';
+        dojo.place(canvas, 'canvascontainer', 'replace');
+        var rect = dojo.window.getBox();
+        var toast = dojo.byId('toast');
+        toast.addEventListener('click', function() { 
+                dojo.animateProperty({
+                        node: toast,
+                        properties: { opacity: 0 },
+                        duration: 350,
+                        onEnd: function() { window.close(); }
+                    }).play();
+            });
+        toast.setAttribute('style', 'display: block; left: ' + ((rect.w-200)/2) + 'px; top: ' + ((rect.h-150)/2) + 'px');
+        dojo.animateProperty({
+                node: toast,
+                properties: { opacity: 1 },
+                duration: 700
+            }).play();
+    });
+</script>
+</head>
+<body>
+<div id="canvascontainer"></div>
+<div id="toast">
+    <p>Der Qbist-Explorer ist noch nicht implementiert. Bitte schauen Sie später wieder vorbei.</p>
+    <p>Hier klicken, um Fenster zu schließen.</p>
+</div>
+</body>
+</html>

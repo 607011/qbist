@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Qbist 2.0: Algorithmus und Bedienung</title>
+<!--
+    Copyright (c) 2012 Oliver Lau. All rights reserved.
+    $Id: help.html 772370cd3f80 2012/05/14 08:26:39 Oliver Lau <oliver@von-und-fuer-lau.de> $
+ -->
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+<meta http-equiv="content-language" content="de" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link media="screen" type="text/css" rel="stylesheet" href="base.css" />
+<link type="text/css" rel="stylesheet" href="qbist.css" />
+<link rel="icon" href="favicon.png" type="image/png" />
+<style type="text/css">
+html, body {
+    margin: auto;
+    width: auto;
+    padding: 1ex 2em 1ex 1em;
+    line-height: 140%;
+    font-size: 10pt;
+    text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
+}
+a {
+	color: #fff;
+	text-decoration: underline;
+}
+a.title {
+	text-decoration: none;
+}	
+a:visited {
+	color: #ddd;
+}
+.sectiontitle {
+	margin: 3ex auto 1ex auto;
+	font-size: 120%;
+	font-weight: bold;
+	font-family: sans-serif;
+}
+p {
+	margin-bottom: 2ex;
+}
+ol.lit {
+	list-style-type: none;
+	list-style-position: inside;
+	text-indent: -2.25em;
+	margin-left: 2.25em;
+	counter-reset: litcount;
+}
+ol.lit li:before {
+	content: "[" counter(litcount) "] ";
+	counter-increment: litcount;
+}
+.picfloatright {
+	float: right;
+	margin: 1ex 0 2ex 2em;
+	display: inline-block;
+	width: 258px;
+}
+.picfloatright img {
+	background-color: rgba(0, 0, 0, 0.7);
+	padding: 1px;
+	border: 1px solid #ccc;
+    box-shadow: 0px 0px 7px rgba(255, 255, 255, 0.6);
+	display: block;
+	margin-bottom: 1ex;
+}
+.picfloatright .bu {
+	font-weight: bold;
+	line-height: 110%;
+	margin-bottom: 2ex;
+	display: inline-block;
+	font-family: sans-serif;
+	text-align: right;
+}
+</style>
+</head>
+<body>
+    <p><a class="title" title="Zur Startseite" href="index.html">Qbist 2.0</a></p>
+    <p class="sectiontitle">Algorithmus</p>
+    <p>
+        Der Ex-<a href="http://www.ct.de/" target="_blank">c't</a>-Redakteur <a href="http://www.j3l7h.de/"
+            target="_blank">Jörn Loviscach</a>, der mittlerweile als Mathe-Professor tätig
+        ist, hat 1995 einen hübschen Algorithmus ausgetüftelt, der Grafiken berechnet, die
+        an moderne Kunst à la <a href="http://de.wikipedia.org/wiki/Wassily_Kandinsky" target="_blank">
+            Kandinsky</a>, <a href="http://de.wikipedia.org/wiki/August_Macke" target="_blank">Macke</a>
+        oder <a href="http://de.wikipedia.org/wiki/Kasimir_Sewerinowitsch_Malewitsch" target="_blank">
+            Malewitsch</a> erinnern. Die meisten damit generierten Bilder haben <a href="http://de.wikipedia.org/wiki/Kubismus"
+                target="_blank">kubistische</a> Züge, und deshalb hat er das Programm <a href="http://www.vi-anec.de/Trance-Art/Evo-Kunst/Evo-Kunst-Beschreibungen/Qbist.html"
+                    target="_blank">Qbist</a> genannt&nbsp;[<a href="#lit1">1</a>].</p>
+    <p>
+        Leider geht die seinerzeit für Windows 95/NT und Mac&nbsp;OS entstandene Software
+        auch auf aktuellen Rechnern recht gemächlich zu Werke. Mir stellte sich angesichts
+        der in moderne Browser integrierten JavaScript-Compiler die Frage, wie schnell die
+        Bilder wohl in einer Web-Anwendung auf dem Bildschirm erscheinen. Herausgekommen
+        ist Qbist 2.0. Sie nutzt drei aktuelle Techniken zur Darstellung: paralleles JavaScript
+        mit <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html"
+            target="_blank">Web Workern</a>, das <a href="https://developers.google.com/native-client/"
+                target="_blank">Native Client SDK</a> für Chrome und <a href="http://www.khronos.org/webgl/"
+                    target="_blank">WebGL</a>&nbsp;[<a href="#lit2">2</a>, <a href="#lit3">3</a>,
+        <a href="#lit4">4</a>].</p>
+    <p>
+        <span class="picfloatright">
+            <img src="gradient.png" alt="vor den Transformationen" width="256" height="256" />
+            <span class="bu">Qbist wendet auf den RGB-Wert jedes Pixels dieses Farbverlaufs bis
+                zu 36 Transformationen an.</span>
+            <img src="resultat.png" alt="nach den Transformationen" width="256" height="256" />
+            <span class="bu">Eins der (8&middot;6&middot;6&middot;6)<sup>36</sup> = 3,56&middot;10<sup>118</sup>
+                möglichen Resultate der Transformationen.</span>
+        </span>
+        Und so funktioniert der Algorithmus: Ausgehend von einem rechteckigen Bild
+        beliebigen Ausmaßes mit einem Farbverlauf, bei dem der Rotanteil nach rechts von
+        Schwarz bis zur Vollfarbe und der Grünanteil analog dazu nach unten wächst (siehe
+        nebenstehendes Bild), wendet der Qbist-Algorithmus auf jedes Pixel eine Reihe von
+        Farbraumtransformationen an. Zu Beginn einer Transformationssequenz lädt er sechs
+        Register mit dem jeweiligen R- und G-Wert des Pixels, der B-Wert wächst proportional
+        mit der Registernummer. Eine einzelne Transformation wählt den RGB-Wert von ein
+        oder zwei Registern aus, verknüpft sie miteinander und schreibt sie in ein drittes
+        Register. Es gibt acht verschiedene Verknüpfungen, etwa die Multiplikation, das
+        zirkuläre Vertauschen der RGB-Komponenten oder Addition/Subtraktion. Nach 36 Transformationen
+        bestimmt der RGB-Wert im Register 0 die Farbe des resultierenden Pixels. Der Parametersatz
+        für eine Transformationssequenz besteht demnach aus vier Arrays (Transformation,
+        Zielregister, zwei Quellregister) mit je 36 Elementen.
+    </p>
+    <p class="sectiontitle">Bedienung</p>
+    <p>
+        Beim Laden der <a href="qbist.html">Webseite</a> und bei Klicken auf &ldquo;zurücksetzen&rdquo;
+        werden die Arrays mit Zufallswerten befüllt. Den Parametersatz des Bildes links
+        oben in der Web-Anwendung kann man im JSON-Format aus dem Eingabefeld unten herauskopieren.
+        Der umgekehrte Weg funktioniert ebenfalls, ein Klick auf &ldquo;importieren&rdquo;
+        lädt den Parametersatz aus dem Textfeld in die Anwendung &mdash; Weitergeben und
+        Tauschen ausdrücklich erwünscht. Die Parameter besonders gelungener Bilder kann
+        man unter einem frei wählbaren Namen lokal im Browser speichern. Sie erscheinen
+        danach in der Auswahlliste unten. Die Parametersätze aus dem <a href="#lit1">c't-Artikel
+            von 1995</a> sind darin bereits vorgegeben. Die damals im Originalprogramm und
+        mit dem <a href="http://docs.gimp.org/de/plug-in-qbist.html" target="_blank">Plug-in</a>
+        für die Open-Source-Bildbearbeitungssoftware <a href="http://www.gimp.org/" target="_blank">
+            Gimp</a> in Dateien mit der Endung &ldquo;.qbe&rdquo; gespeicherten Parametersätze
+        lassen sich auch heute noch verwenden. Dazu zieht man einfach eine solche Datei
+        auf das Eingabefeld. Die darin enthaltenen Parameter werden automatisch importiert.
+        Das funktioniert auch mit auf &ldquo;.json&rdquo; oder &ldquo;.txt&rdquo; endenden
+        Textdateien, die einen Parametersatz im JSON-Format enthalten.</p>
+    <p>
+        Wählt man in der Beispielanwendung ein Bild durch Klicken aus, verwendet Qbist dessen
+        Parametersatz als Grundlage für die Variationen. Für jede Variation setzt es pro
+        Array eine vorgegebene Anzahl von Elementen auf Zufallswerte. Wie stark die damit
+        einhergehende Abweichung vom Original sein soll, lässt sich über die Auswahlliste
+        im Menü oben einstellen.</p>
+    <p>
+        Statt des Farbverlaufs als Ausgangswert für die Transformationen kann man auch ein
+        Bild vom Typ PNG, JPG oder GIF verwenden. Dazu zieht man die Bilddatei einfach auf
+        eine der Variationen und lässt sie dort fallen. Mit der Auswahlliste &ldquo;Filter&rdquo;
+        bestimmt man den Modus, nach dem Bilddatei und Farbverlauf in die Belegung der Register
+        eingehen: &rdquo;überschreiben&rdquo; ignoriert die Bildinformationen, &ldquo;kopieren&rdquo;
+        berücksichtigt ausschließlich das Bild, bei &ldquo;multiplizieren&rdquo;, &ldquo;addieren&ldquo;
+        und &ldquo;subtrahieren&rdquo; verknüpft Qbist die RGB-Werte der Pixel von Bild
+        und Farbverlauf mit den entsprechenden arithmetischen Operationen.</p>
+    <p>
+        Links oben in jedem Bild sind zwei Knöpfe zu sehen. Mit dem linken überträgt man
+        dessen Parametersatz in das Eingabefeld unten. Interessanter ist der rechte, der
+        eine großformatige Version des Bildes generiert und in einem neuen Fenster als PNG-Datei
+        darstellt. Das PNG lässt sich etwa zur Verwendung als Hintergrundgrafik speichern.
+        Breite und Höhe des PNG legt man mit den beiden kleinen Eingabefeldern im Menü oben
+        fest.</p>
+    <p>
+        Last, but not least lässt sich über eine weitere Auswahlliste oben die Anzahl der
+        Web Worker beziehungsweise Threads (Native Client) festlegen, auf die die Berechnung
+        der Variationen beziehungsweise der Kacheln des großformatigen Bildes verteilt werden
+        soll. (Oliver Lau/<a href="mailto:ola@ct.de">ola</a>)</p>
+    <p class="sectiontitle">Literatur</p>
+    <ol class="lit">
+        <li><a name="lit1"></a>Dr. Jörn Loviscach, Ausgewürfelt, Moderne Kunst algorithmisch
+            erzeugen, c't&nbsp;10/95, S.&nbsp;326</li>
+        <li><a name="lit2"></a>Oliver Lau, Würze fürs Web, Verteiltes Rechnen mit JavaScript,
+            c't&nbsp;9/12, S.&nbsp;190</li>
+        <li><a name="lit3"></a>Oliver Lau, Mit Pfeffer und Salz, Chrome-Plug-ins mit C/C++ entwickeln,
+            c't&nbsp;10/12, S.&nbsp;184</li>
+        <li><a name="lit4"></a>Oliver Lau, Web auf Speed, Schnelle 2D-Grafiken im Browser mit WebGL,
+            c't&nbsp;11/12, S.&nbsp;182</li>
+    </ol>
+</body>
+</html>

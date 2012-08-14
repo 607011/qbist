@@ -1,0 +1,240 @@
+﻿
+#controller
+{
+	margin-top: 0 0 7px 0;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 99%;
+	z-index: 100;
+	padding: 5px 7px;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.8);
+	background-image: linear-gradient(bottom, rgb(66,66,66) 44%, rgb(105,105,105) 72%);
+	background-image: -o-linear-gradient(bottom, rgb(66,66,66) 44%, rgb(105,105,105) 72%);
+	background-image: -moz-linear-gradient(bottom, rgb(66,66,66) 44%, rgb(105,105,105) 72%);
+	background-image: -webkit-linear-gradient(bottom, rgb(66,66,66) 44%, rgb(105,105,105) 72%);
+	background-image: -ms-linear-gradient(bottom, rgb(66,66,66) 44%, rgb(105,105,105) 72%);
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(66,66,66)), color-stop(0.72, rgb(105,105,105)));
+	border-bottom: 1px solid #999;
+}
+#showroom
+{
+	margin: 57px 5px 0 5px;
+}
+.title
+{
+	font-family: sans-serif;
+	font-style: italic;
+	font-weight: bold;
+	font-size: 14pt;
+	color: #eee;
+	margin-right: 0.5em;
+	display: inline;
+}
+a.title:visited
+{
+	color: #eee;
+}
+a.title:hover
+{
+	text-decoration: none;
+}
+.canvas
+{
+	display: inline-block;
+	width: 256px;
+	height: 256px;
+	margin: 1px 1px;
+	padding: 0;
+	border: 1px solid #fff;
+	background-color: #333;
+	cursor: inherit;
+	position: relative;
+	text-align: left;
+}
+.marked 
+{
+	border: 2px solid red;
+	margin: 0px 0px;
+}
+.overlay
+{
+	cursor: pointer;
+	padding: 0;
+	z-index: 99;
+	position: relative;
+	width: 16px;
+	height: 16px;
+	background-repeat: no-repeat;
+	background-color: transparent;
+	color: black;
+	top: -256px;
+	display: inline-block;
+}
+.scaleoverlay
+{
+	left: 3px;
+	background-image: url(loader-icon-16x16.png);
+}
+.imexoverlay
+{
+	left: 6px;
+}
+.saveoverlay
+{
+	left: 9px;
+}
+.module
+{
+	cursor: pointer;
+	position: relative;
+	top: 0;
+	left: 0;
+}
+#pictureoverlay
+{
+	z-index: 100;
+	top: 10px;
+	left: 10px;
+	position: absolute;
+	background-color: #333;
+	border: 1px solid #ccc;
+	overflow: scroll;
+}
+select
+{
+	font-family: monospace;
+	border: 1px solid #fff;
+	font-size: 12px;
+	background-color: #333;
+	color: #fff;
+}
+input[type="text"]
+{
+	font-family: monospace;
+	border: 1px solid #fff;
+	font-size: 12px;
+	background-color: #666;
+	color: #fff;
+}
+button
+{
+	font-family: monospace;
+	padding: 1px 0.5em;
+	border: 1px solid #fff;
+	font-size: 12px;
+	background-color: #333;
+	color: #fff;
+}
+button:hover
+{
+	background-color: #666;
+	cursor: pointer;
+}
+button:disabled
+{
+	background-color: #333;
+	color: #999;
+	cursor: auto;
+	border: 1px solid #999;
+}
+a
+{
+	color: #f99;
+	text-decoration: none;
+}
+a:visited
+{
+	color: #fcc;
+}
+a:hover
+{
+	text-decoration: underline;
+}
+#footer
+{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 99%;
+	border-top: 1px solid #ccc;
+	padding: 5px 7px 5px 7px;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.8);
+	background-image: linear-gradient(bottom, rgb(33,33,33) 44%, rgb(66,66,66) 72%);
+	background-image: -o-linear-gradient(bottom, rgb(33,33,33) 44%, rgb(66,66,66) 72%);
+	background-image: -moz-linear-gradient(bottom, rgb(33,33,33) 44%, rgb(66,66,66) 72%);
+	background-image: -webkit-linear-gradient(bottom, rgb(33,33,33) 44%, rgb(66,66,66) 72%);
+	background-image: -ms-linear-gradient(bottom, rgb(33,33,33) 44%, rgb(66,66,66) 72%);
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(33,33,33)), color-stop(0.72, rgb(66,66,66)));
+}
+#importexport
+{
+	margin: 0 5px 47px 5px;
+	padding: 0.5ex 0.5em;
+	border: 1px solid #999;
+	text-align: left;
+}
+#console
+{
+	overflow: auto;
+	padding: 1ex 0.5em;
+	width: 98%;
+	height: 16ex;
+	background-color: #eee;
+	border: 1px	solid #fff;
+	margin: 1px 0;
+}
+#hiddencanvascontainer
+{
+	display: none;
+}
+#time
+{
+}
+#mode 
+{
+	display: inline-block;
+	border: 1px solid #ddd;
+	padding: 1px 0.5em;
+	font-weight: bold;
+	box-shadow: 0px 0px 4px #fff;
+	background-color: #000;
+	color: #ccc;
+}
+h1
+{
+	margin-top: 0.5ex;
+	margin-bottom: 1.5ex;
+}
+#beta
+{
+	z-index: 201;
+	position: fixed;
+	left: -46px;
+	bottom: 4px;
+	width: 120px;
+	height: 30px;
+	padding: 14px 1em;
+	background-color: rgba(200, 30, 30, 0.9);
+	background-image: url(speckled.png);
+	background-repeat: repeat;
+	color: #fcc;
+	font-size: 20px;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+}
+#bigloader
+{
+	width: 72px;
+	height: auto;
+	z-index: 202;
+	position: absolute;
+	text-align: center;
+}

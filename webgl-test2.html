@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebGL Test</title>
+<link rel="stylesheet" href="qbist.css" />
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec2 vPosition;
+attribute vec4 vColor;
+varying vec4 color;
+void main() {
+	gl_Position = vec4(vPosition, 0, 1);
+	color = vColor;
+}
+</script>
+<script id="shader-fs" type="x-shader/x-fragment"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+<script type="text/javascript">
+var Stopwatch = (function() {
+    var t0 = (new Date()).getTime();
+    return {
+        start: function() { t0 = (new Date()).getTime(); },
+        stop: function() { return (new Date()).getTime() - t0; }
+    };
+})();
+
+var TRX = {
+    'Alien-Kopf': {'transform':[6,1,5,8,1,5,0,4,4,10,9,1,9,4,5,3,11,11,1,6,4,3,6,11,8,7,7,2,0,1,3,5,10,10,7,5],'source':[5,3,2,5,5,3,3,0,0,0,3,3,5,2,2,3,3,1,0,3,4,1,1,5,4,4,1,5,2,1,0,0,5,2,3,2],'control':[1,4,0,4,2,5,2,3,3,4,4,3,3,4,0,0,1,4,0,0,4,4,2,0,4,2,1,5,1,3,2,4,2,0,2,2],'dest':[4,4,3,3,5,0,1,2,4,1,1,4,4,3,5,2,5,5,4,5,2,2,1,0,0,1,4,0,0,0,1,0,5,0,1,4]},
+    'Spotlights': {'transform':[6,8,1,6,8,3,9,2,2,3,1,7,4,11,6,5,2,7,6,0,8,1,1,11,3,0,0,9,9,2,2,5,5,6,10,4],'source':[4,3,0,0,4,0,5,3,5,3,1,4,5,4,4,0,1,4,0,3,2,0,3,2,3,5,1,5,4,3,1,0,4,1,5,4],'control':[3,5,0,5,5,2,3,0,2,5,5,4,5,3,4,1,5,0,1,3,4,5,2,1,2,2,1,2,3,1,4,1,5,2,2,1],'dest':[3,1,2,4,5,5,1,1,1,4,4,0,4,4,3,5,1,5,2,4,2,3,4,4,5,2,0,0,3,1,5,2,4,3,4,3]},
+    'Rolltreppe': {'transform':[6,1,5,8,1,11,0,4,4,10,9,1,9,4,5,3,11,7,1,6,4,3,6,11,8,7,7,2,0,1,3,5,10,10,7,5],'source':[5,3,2,5,5,3,3,0,0,0,3,3,5,2,5,3,3,1,4,3,4,1,1,5,4,4,1,5,2,1,4,0,5,2,3,2],'control':[1,4,0,3,2,5,2,3,3,4,4,4,3,4,0,0,1,4,0,0,4,4,2,0,4,2,1,5,1,3,2,4,2,0,2,2],'dest':[4,4,3,0,5,0,1,2,4,1,1,5,4,3,5,2,5,5,4,1,2,2,1,0,0,1,4,0,0,0,1,0,5,0,1,4]},
+    'Moiré': {'transform':[2,8,0,3,6,0,7,7,4,5,7,8,2,1,7,5,1,1,4,3,4,4,7,3,2,5,4,8,7,0,4,0,2,1,8,7],'source':[0,1,5,3,2,4,0,2,4,1,3,0,0,3,1,3,0,5,4,1,1,2,2,1,0,4,3,5,5,0,0,1,4,0,4,2],'control':[5,0,4,4,5,5,2,2,4,2,4,1,2,5,1,0,4,3,5,4,5,2,1,5,5,0,0,0,4,1,5,2,4,1,2,1],'dest':[1,3,2,4,5,0,5,5,5,0,2,3,4,1,0,3,1,2,3,4,0,1,3,2,3,2,4,2,1,1,1,1,5,0,0,0]},
+    'Kasimir Malewitsch': {'transform':[5,8,1,7,3,7,3,4,1,2,3,5,7,1,4,7,7,2,0,8,4,3,0,2,5,0,1,1,3,4,3,3,2,8,7,8],'source':[3,2,1,5,4,5,0,3,1,5,4,4,0,1,0,4,0,5,5,2,0,3,0,3,2,5,4,5,5,0,3,1,3,0,2,5],'control':[4,4,5,5,3,2,4,1,0,2,3,1,2,2,3,0,5,0,5,3,2,1,5,5,4,4,2,2,0,1,1,0,1,5,5,3],'dest':[4,5,5,4,0,0,4,0,0,4,3,2,1,4,2,0,3,2,5,0,3,2,4,0,1,2,1,2,5,5,4,2,2,4,5,5]},
+    'August Macke': {'transform':[2,8,0,3,6,0,7,7,4,5,7,8,2,1,7,5,1,1,4,3,4,4,7,3,2,5,4,8,7,8,0,0,2,1,8,7],'source':[0,1,5,5,2,4,0,2,4,1,3,0,0,3,1,3,0,5,4,1,1,2,2,1,0,4,3,5,5,0,3,1,4,0,4,2],'control':[5,0,4,4,5,5,2,2,4,2,4,1,2,5,1,0,4,3,5,4,5,2,1,5,5,0,4,0,4,1,5,2,4,1,2,1],'dest':[1,3,2,4,5,0,5,5,0,0,2,3,4,1,0,1,1,2,3,4,0,1,3,2,3,2,4,2,1,1,1,1,5,0,0,0]},
+    'James Bond': {'transform':[9,5,11,3,3,3,7,0,4,8,0,11,3,0,0,1,7,3,4,1,8,9,1,8,3,9,10,10,8,1,2,3,1,3,3,7],'source':[1,2,2,4,2,4,0,1,3,0,0,2,0,2,5,4,2,0,2,5,2,4,3,0,1,0,1,2,2,1,4,2,5,0,1,2],'control':[3,3,0,0,4,5,0,1,3,5,4,5,5,5,4,5,3,4,2,2,2,3,1,2,5,2,2,2,2,4,1,5,1,3,1,3],'dest':[2,1,5,1,5,0,1,5,1,4,5,5,0,3,2,3,4,1,4,2,3,2,1,2,4,0,3,4,0,4,0,4,3,2,0,1]},
+    'Loch': {'transform':[1,7,3,11,6,9,1,1,11,4,2,7,8,4,10,5,8,1,7,11,3,10,11,0,3,4,1,5,10,1,11,11,5,10,6,5],'source':[4,3,4,1,3,5,2,2,1,5,3,1,2,3,4,4,2,4,3,1,4,3,4,0,4,2,1,2,1,2,5,3,1,0,3,4],'control':[2,3,3,3,4,4,1,5,0,0,0,3,5,4,0,4,1,3,1,1,0,4,0,2,0,4,0,4,0,0,3,0,3,1,2,1],'dest':[5,3,0,1,4,2,0,4,2,3,0,5,4,2,4,2,3,1,0,1,4,0,5,3,2,5,4,5,0,1,3,4,1,1,2,3]},
+    'Fadenkreuz': {'transform':[9,0,11,8,1,4,5,2,8,8,5,2,5,10,1,2,10,5,0,9,11,1,2,5,11,2,3,9,8,8,1,2,6,6,7,8],'source':[4,1,4,1,2,0,3,0,1,1,0,4,0,4,2,2,4,1,2,1,5,1,5,5,3,3,0,5,3,5,0,1,1,3,0,2],'control':[4,0,3,4,3,3,2,1,5,5,2,0,4,2,2,2,4,3,2,1,5,3,1,4,1,1,5,4,0,5,1,2,0,1,5,2],'dest':[1,5,3,2,3,0,2,2,4,4,2,2,3,3,3,2,2,2,3,5,3,5,1,4,5,2,2,0,3,4,1,0,1,1,2,5]},
+    'Erntemond': {'transform':[9,5,11,3,3,6,7,0,4,8,0,11,3,0,0,1,7,3,4,4,8,9,1,8,3,9,10,10,8,1,2,11,1,3,3,7],'source':[1,2,2,4,2,4,0,1,3,0,0,2,0,2,5,3,2,0,2,5,2,4,3,0,1,0,1,2,2,1,4,2,5,3,1,2],'control':[3,3,0,0,4,5,0,1,3,5,4,5,5,5,4,5,3,4,2,2,2,3,1,1,5,2,2,2,2,4,1,5,1,3,1,3],'dest':[2,1,5,1,5,0,1,5,0,4,5,5,0,3,2,3,4,1,4,2,3,2,1,2,4,0,3,4,0,5,0,4,3,2,0,1]},
+    'Eiffel': {'transform':[5,8,1,7,3,7,3,0,5,2,4,5,7,1,4,0,6,2,0,8,4,7,0,6,5,7,4,3,2,4,2,7,8,7,2,4],'source':[4,4,1,5,4,3,0,0,5,5,4,4,0,1,0,1,5,5,1,5,0,3,2,3,2,2,1,5,5,1,3,1,4,0,1,2],'control':[5,0,1,5,4,2,1,3,3,4,3,1,3,0,2,0,5,4,5,5,5,1,2,3,4,3,2,2,0,0,1,0,1,3,2,4],'dest':[4,0,5,4,4,0,4,0,0,4,0,2,1,4,5,0,3,4,5,1,0,2,4,3,4,2,3,2,5,0,4,2,5,0,5,5]},
+    'Aufbrechendes Ei': {'transform':[6,1,5,8,1,5,0,4,4,10,9,1,9,4,5,2,11,11,1,6,4,2,6,11,8,7,7,2,0,1,3,5,10,10,7,5],'source':[5,3,2,5,5,3,3,0,0,0,3,3,5,2,2,3,5,1,0,3,4,1,1,5,4,4,1,5,2,1,0,0,5,2,3,2],'control':[1,4,0,4,2,5,2,3,3,4,5,3,3,4,0,0,1,4,0,0,4,4,2,0,4,2,1,5,1,0,2,4,2,0,2,2],'dest':[4,4,1,3,5,0,1,2,4,1,1,4,4,3,5,2,5,5,4,5,2,2,1,0,0,1,4,0,0,0,1,1,5,0,1,4]},
+    'Tic Tac Toe': {'transform':[1,7,5,11,6,9,1,1,11,4,2,5,8,4,10,5,8,1,7,11,3,10,11,0,3,4,1,5,10,1,11,11,5,10,6,5],'source':[4,3,4,1,3,1,2,2,1,5,3,2,2,3,4,4,2,4,3,1,4,3,4,0,4,0,1,2,1,2,5,3,1,0,3,4],'control':[2,3,2,3,4,1,1,5,0,0,0,3,5,4,0,4,1,3,1,1,0,4,0,2,0,4,0,4,0,0,3,0,3,1,0,1],'dest':[5,3,0,1,4,2,0,4,2,3,0,5,0,2,4,2,3,1,0,1,4,0,5,3,2,5,4,5,0,1,3,4,1,1,2,3]},
+    'Schwarzes Loch': {'transform':[0,6,5,2,2,5,6,2,7,0,5,5,0,2,5,2,4,2,1,1,3,5,1,0,0,4,4,5,10,1,5,1,2,0,4,6],'source':[2,3,3,4,5,0,0,4,0,2,4,1,1,1,4,0,2,4,0,3,0,0,5,3,2,3,5,0,4,5,5,0,2,0,1,4],'control':[4,4,5,1,5,0,0,2,5,4,3,4,5,2,4,1,0,4,2,4,2,3,3,0,3,4,0,4,2,5,0,1,5,0,4,1],'dest':[5,3,2,3,1,2,5,5,4,3,2,4,0,5,5,0,3,1,5,3,4,2,5,1,4,1,4,2,3,5,4,3,5,5,5,5]},
+    'Hintergrund 001': {'transform':[2,5,6,2,3,7,1,1,4,4,6,4,5,0,2,1,1,4,5,5,0,6,2,4,4,1,0,5,2,5,1,3,3,7,6,3],'source':[2,1,3,1,0,3,4,4,5,1,4,1,5,2,2,3,5,5,5,2,2,0,0,5,2,4,3,0,3,0,4,2,0,4,4,5],'control':[1,5,1,1,5,2,4,4,3,3,4,5,1,4,1,0,0,0,4,2,2,2,0,5,2,3,5,5,3,4,0,4,2,4,2,2],'dest':[2,4,5,3,2,2,2,5,3,2,5,1,1,3,0,2,0,3,4,3,0,4,2,2,0,3,1,2,1,2,0,2,2,4,3,5]},
+    'Sonne mit Aura': {'transform':[2,3,6,2,1,6,3,1,0,0,3,7,4,0,5,1,5,0,7,2,6,6,3,2,5,5,4,1,7,1,4,7,5,6,5,1],'source':[2,0,1,4,4,2,0,1,1,3,1,3,2,0,4,2,4,3,1,1,3,2,4,3,4,2,4,1,1,3,2,4,1,4,2,1],'control':[1,2,3,2,2,1,5,5,0,2,3,3,0,5,1,4,0,3,4,1,0,4,0,3,5,0,5,5,3,4,5,0,3,2,1,4],'dest':[4,0,3,3,2,3,3,3,3,5,1,2,0,2,1,2,3,5,2,2,2,0,1,1,0,3,0,0,5,2,2,4,0,5,5,0]},
+    'Dunkles Auge': {'transform':[6,3,5,8,1,5,0,4,4,10,9,1,9,4,5,2,11,11,1,6,4,2,6,11,8,7,7,2,0,1,3,5,4,10,7,5],'source':[5,3,2,5,5,3,3,0,0,0,3,3,5,2,2,3,5,1,0,3,4,1,1,3,4,4,1,5,2,1,0,0,5,2,3,2],'control':[1,4,0,4,2,5,2,3,3,4,5,3,3,4,0,0,1,1,0,0,4,4,2,0,4,2,1,5,1,0,2,4,2,0,2,2],'dest':[4,4,1,3,5,0,1,2,4,1,1,4,4,3,5,2,5,5,4,5,4,2,1,0,0,1,4,0,0,0,1,1,5,0,1,4]},
+    'Herz': {'transform':[6,1,5,8,1,5,0,4,4,10,9,1,9,4,5,2,11,11,1,6,6,2,6,11,8,7,7,2,4,1,3,5,10,10,7,5],'source':[5,3,2,5,5,3,3,0,0,0,3,3,5,2,2,3,5,4,0,3,4,1,1,5,4,4,1,5,4,1,0,0,5,2,3,2],'control':[1,4,0,4,2,5,2,3,3,5,5,3,3,4,0,0,1,4,0,0,4,2,2,0,4,2,1,5,1,0,2,4,2,0,2,2],'dest':[4,4,1,3,5,0,1,2,4,1,1,3,4,3,5,2,5,5,4,2,2,2,1,0,0,1,4,0,0,0,1,1,5,0,1,4]},
+    'Farbtupfer': {'transform':[8,3,2,3,4,7,2,8,4,2,3,2,4,8,8,2,1,5,0,1,0,6,2,3,1,0,4,0,2,6,3,1,3,6,1,3],'source':[5,1,4,3,3,2,3,1,3,1,1,0,1,4,4,2,2,4,0,2,4,2,1,1,0,1,2,0,4,5,4,2,1,5,0,5],'control':[0,3,2,0,0,1,0,2,5,4,1,1,0,2,2,0,1,4,3,1,3,1,0,2,0,5,0,5,4,0,3,1,0,3,1,5],'dest':[3,5,1,4,1,5,2,0,1,5,3,3,5,5,3,5,2,5,5,3,3,4,5,1,1,0,3,2,4,2,3,3,3,1,0,4]},
+    '70er Tapete': {'transform':[8,7,1,4,3,1,6,7,2,7,2,0,5,0,3,8,8,4,4,0,6,2,2,1,2,6,7,2,2,6,0,2,5,1,2,2],'source':[0,5,2,1,5,1,3,3,4,2,5,5,3,5,0,4,1,5,1,2,2,5,1,1,4,2,5,4,0,2,2,2,2,0,5,4],'control':[5,1,0,4,1,3,0,1,4,5,1,5,5,2,1,5,3,2,2,5,4,1,3,1,5,2,1,1,5,5,1,4,2,1,0,1],'dest':[0,5,4,4,2,5,1,5,5,2,2,2,4,2,0,0,3,5,1,2,1,5,2,5,0,0,5,4,4,3,0,5,3,0,4,3]},
+    'Psychedelic Blast': {'transform':[8,7,7,7,2,2,1,0,5,2,8,0,8,8,8,6,1,0,3,0,1,0,0,0,3,5,1,8,8,7,8,2,3,1,6,2],'source':[2,3,5,0,3,0,0,0,1,1,4,4,3,1,3,4,1,5,0,1,0,3,1,1,2,1,5,4,3,4,5,1,0,3,3,5],'control':[5,0,5,1,2,5,5,1,4,4,3,2,2,0,1,2,4,3,3,2,1,3,0,3,1,2,0,3,5,4,2,4,5,0,0,2],'dest':[5,4,4,4,5,0,1,3,1,4,4,3,2,0,5,3,4,0,1,4,0,5,3,2,0,2,5,2,0,0,3,4,4,4,0,3]},
+    'Farbplasma': {'transform':[8,7,7,7,2,2,1,0,5,2,8,0,8,8,8,6,1,0,3,0,1,0,0,1,3,5,1,8,8,7,8,2,3,1,6,2],'source':[2,3,5,0,3,0,0,0,1,1,4,4,3,1,3,4,1,5,0,1,0,2,1,1,2,1,5,4,4,4,5,1,0,3,3,5],'control':[5,2,5,1,2,5,5,1,4,4,2,2,2,0,1,2,4,3,3,2,1,3,0,3,1,2,0,3,5,4,2,4,5,0,0,2],'dest':[5,4,4,4,5,0,1,3,1,4,4,3,2,0,5,3,4,0,1,4,0,5,3,2,0,2,5,2,0,3,3,4,4,4,0,3]},
+    'Vertigo': {'transform':[8,7,7,7,2,1,1,0,5,2,8,0,8,8,8,6,1,0,3,0,1,0,0,0,3,5,1,8,8,8,8,2,3,1,6,2],'source':[2,3,5,0,3,0,0,0,1,4,4,4,3,1,0,4,1,5,0,1,0,3,1,1,2,1,5,4,3,4,5,1,0,3,3,5],'control':[5,0,5,1,2,3,5,1,4,4,3,2,2,0,1,2,4,3,3,2,1,3,0,4,1,2,0,3,5,4,2,4,5,0,0,2],'dest':[5,4,1,4,5,0,1,3,1,1,4,3,2,0,5,3,4,0,1,4,0,5,3,2,0,2,5,2,0,0,3,4,4,4,0,3]},
+    'Kringeling': {'transform':[8,7,7,7,2,1,1,0,5,2,8,0,8,8,8,6,1,0,3,0,1,0,0,0,0,5,8,8,8,8,8,2,3,1,6,2],'source':[2,3,5,0,3,0,0,0,1,4,4,4,3,1,0,4,1,5,0,1,0,3,1,1,2,1,0,4,3,4,5,1,0,3,3,5],'control':[5,1,5,1,2,3,5,1,4,4,3,2,2,0,1,2,4,3,3,2,1,3,0,4,1,3,0,3,5,4,2,4,5,0,0,2],'dest':[5,4,1,4,5,0,1,3,1,1,4,3,2,0,5,3,4,0,1,4,0,5,3,2,0,2,5,2,0,0,3,4,4,4,0,3]}
+};
+
+function generateFragmentShader() {
+    var NUM_TRANSFORMS = 36;
+	var code =
+        'precision mediump float;\n' +
+        'varying vec4 color;\n' +
+        'void main() {\n' +
+        '    const int NUM_REGS = 6;\n' +
+        '    vec3 reg[NUM_REGS];\n';
+    var data = TRX['Eiffel'];
+    var transformCode = '';
+    var needed = [ true, false, false, false, false, false ];
+    var eliminated = 0;
+    function addConditionally(op, dst, sources) {
+        if (needed[dst]) {
+            transformCode = op.concat('\n').concat(transformCode);
+            needed[dst] = false;
+            for (var j = 0; j < sources.length; ++j)
+                needed[sources[j]] = true;
+        }
+        else {
+            ++eliminated;
+        }
+    }
+    var i = NUM_TRANSFORMS;
+    while (--i) {
+        var dest = data.dest[i];
+        var source = data.source[i];
+        var control = data.control[i];
+        switch (data.transform[i])
+        {
+        case 0: // projection 
+            addConditionally('    reg[' + dest + '] = dot(reg[' + source + '], reg[' + control + ']) * reg[' + source + '];', dest, [ source, control ]);
+            break;
+        case 1: // shift
+            addConditionally('    reg[' + dest + '] = reg[' + source + '] + reg[' + control + '];\n' +
+                '    reg[' + dest + '] -= vec3(greaterThanEqual(reg[' + dest + '], vec3(1.0, 1.0, 1.0)));', dest, [ source, control ]);
+            break;
+        case 2: // shiftBack 
+            addConditionally('    reg[' + dest + '] = reg[' + source + '] - reg[' + control + '];\n' +
+                '    reg[' + dest + '] += vec3(lessThanEqual(reg[' + dest + '], vec3(0.0, 0.0, 0.0)));', dest, [ source, control ]);
+            break;
+        case 3: // rotate
+            addConditionally('    reg[' + dest + '] = vec3(reg[' + source + '].gb, reg[' + source + '].r);', dest, [ source ]);
+            break;
+        case 4: // rotate2 
+            addConditionally('    reg[' + dest + '] = vec3(reg[' + source + '].b, reg[' + source + '].rg);', dest, [ source ]);
+            break;
+        case 5: // multiply 
+            addConditionally('    reg[' + dest + '] = reg[' + source + '] * reg[' + control + '];', dest, [ source, control ]);
+            break;
+        case 6: // sine
+            addConditionally('    reg[' + dest + '] = 0.5 + 0.5 * sin(radians(20.0 * reg[' + source + '] * reg[' + control + ']));', dest, [ source, control ]);
+            break;
+        case 7: //conditional 
+            addConditionally('    if (reg[' + control + '].r + reg[' + control + '].g + reg[' + control + '].b > 0.5) {\n' +
+                '        reg[' + dest + '] = reg[' + source + '];\n' +
+                '    }\n' +
+                '    else {\n' +
+                '        reg[' + dest + '] = reg[' + control + '];\n' +
+                '    }', dest, [ source, control ]);
+            break;
+        case 8: // complement
+            addConditionally('    reg[' + dest + '] = 1.0 - reg[' + source + '];', dest, [ source, control ]);
+            break;
+        default:
+            // console.log('Ungültige Transformation!');
+            break;
+        }
+    }
+    addConditionally('    reg[5] = vec3(color.rg, 5./float(NUM_REGS));', 5, []);
+    addConditionally('    reg[4] = vec3(color.rg, 4./float(NUM_REGS));', 4, []);
+    addConditionally('    reg[3] = vec3(color.rg, 3./float(NUM_REGS));', 3, []);
+    addConditionally('    reg[2] = vec3(color.rg, 2./float(NUM_REGS));', 2, []);
+    addConditionally('    reg[1] = vec3(color.rg, 1./float(NUM_REGS));', 1, []);
+    addConditionally('    reg[0] = vec3(color.rg, 0./float(NUM_REGS));', 0, []);
+
+    code += transformCode.concat(
+        '    gl_FragColor = vec4(fract(reg[0]), 1.0);\n' +
+        '}');
+	var fs = document.getElementById('shader-fs');
+	fs.text = code;
+	
+	console.log(fs.text);
+	console.log(Math.round(100 * eliminated / NUM_TRANSFORMS) + '% gespart');
+}
+
+function start() {
+    Stopwatch.start();
+    generateFragmentShader();
+	console.log('Generieren: ' + Stopwatch.stop() + ' ms');
+
+    Stopwatch.start();
+	var canvas = document.getElementById('webglcanvas');
+	var gl_params = { antialias: true };
+	var gl = canvas.getContext('webgl', gl_params) || canvas.getContext('experimental-webgl', gl_params);
+	var vertexShader = createShaderFromScriptElement(gl, 'shader-vs');
+	var fragmentShader = createShaderFromScriptElement(gl, 'shader-fs');
+	var program = createProgram(gl, [vertexShader, fragmentShader]);
+	gl.useProgram(program);
+	function bindAttribFloat32Buffer(name, array, n) {
+	    var location = gl.getAttribLocation(program, name);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());  
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW); 
+        gl.enableVertexAttribArray(location); 
+	    gl.vertexAttribPointer(location, n, gl.FLOAT, false, 0, 0);  
+	}
+	bindAttribFloat32Buffer('vColor',
+	    [
+            0.0,  1.0,  0.0,  1.0, // green
+            1.0,  1.0,  0.0,  1.0, // yellow
+            0.0,  0.0,  0.0,  1.0, // black
+            0.0,  0.0,  0.0,  1.0, // black
+            1.0,  1.0,  0.0,  1.0, // yellow 
+            1.0,  0.0,  0.0,  1.0  // red
+        ], 4);
+    bindAttribFloat32Buffer('vPosition',
+        [
+	        -1.0, -1.0,
+	         1.0, -1.0,
+	        -1.0,  1.0,
+	        -1.0,  1.0,
+	         1.0, -1.0,
+	         1.0,  1.0
+	    ], 2);
+	console.log('Kompilieren: ' + Stopwatch.stop() + ' ms');
+
+    Stopwatch.start();
+	gl.drawArrays(gl.TRIANGLES, 0, 6);
+	console.log('Zeichnen: ' + Stopwatch.stop() + ' ms');
+}
+</script>
+</head>
+
+<body onload="start()">
+<canvas id="webglcanvas" class="canvas" width="1600" height="1600" style="width: 800px; height: 800px; margin: 10px"></canvas>
+</body>
+</html>

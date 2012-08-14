@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Qbist 2.0 | Bild wird berechnet ...</title>
+<!--
+    Copyright (c) 2012 Oliver Lau. All rights reserved.
+    $Id: imagewindow.html 887730986d7e 2012/03/15 15:57:23 Oliver Lau <oliver@von-und-fuer-lau.de> $
+ -->
+<meta http-equiv="content-language" content="de">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="icon" href="favicon.png" type="image/png" />
+<link media="screen" type="text/css" rel="stylesheet" href="base.css" />
+<style type="text/css">
+
+#progressbarcontainer
+{
+    display: inline-block;
+    width: 200px;
+    height: 20px;
+    border: 1px solid #ddd;
+    padding: 1px 1px;
+}
+#progressbar
+{
+    display: inline-block;
+    background-color: #ccc;
+    width: 0;
+    height: 100%;
+}
+#progressindicator
+{
+    display: inline-block;
+    font-weight: bold;
+    font-size: 20px;
+    color: #ddd;
+    font-family: monospace;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.8);
+    text-align: right;
+    margin: 1ex 1em;
+}
+</style>
+<script type="text/javascript">
+window.addEventListener('load', function() {
+    var progressIndicator = document.getElementById('progressindicator');
+    var progressBar = document.getElementById('progressbar');
+    window.addEventListener('message', function(e) {
+            if (!(e.origin === 'http://localhost' || e.origin === 'http://von-und-fuer-lau.de'))
+                return;
+            var percent = Math.round(e.data) + '%';
+            if (percent == '100%') {
+                progressIndicator.innerHTML = 'Konvertieren in PNG ... <img src="loader-icon-16x16.png" width="16" height="16" title="Bitte warten ..." alt="Bitte warten ..." />';
+                progressBar.style.display = 'none';
+            }
+            else {
+                progressIndicator.innerHTML = percent;
+                progressBar.style.width = percent;
+            }
+        }, false);
+});
+</script>
+</head>
+<body>
+    <div id="progressbarcontainer"><span id="progressbar"></span></div>
+    <div id="progressindicator"></div>
+</body>
+</html>
