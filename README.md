@@ -10,7 +10,7 @@ Ausgehend von einem rechteckigen Bild beliebigen Ausmaßes mit einem Farbverlauf
 
 Der Parametersatz für eine Transformationssequenz besteht demnach aus vier Arrays (Transformation, Zielregister, zwei Quellregister) mit je 36 Elementen. Zum Start werden die Arrays mit Zufallswerten befüllt.
 
-Literatur:
+## Literatur
 
   - Oliver Lau, Würze fürs Web, Verteiltes Rechnen mit JavaScript, [c't 9/12, S. 190](http://www.heise.de/artikel-archiv/ct/2012/9/190_kiosk)
   - Oliver Lau, Mit Pfeffer und Salz, Chrome-Plug-ins mit C/C++ entwickeln, [c't 10/12, S. 184](http://www.heise.de/artikel-archiv/ct/2012/10/184_kiosk)
