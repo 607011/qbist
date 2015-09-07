@@ -12,6 +12,6 @@ Der Parametersatz für eine Transformationssequenz besteht demnach aus vier Arra
 
 ## Literatur
 
-  - Oliver Lau, Würze fürs Web, Verteiltes Rechnen mit JavaScript, [c't 9/12, S. 190](http://www.heise.de/artikel-archiv/ct/2012/9/190_kiosk)
-  - Oliver Lau, Mit Pfeffer und Salz, Chrome-Plug-ins mit C/C++ entwickeln, [c't 10/12, S. 184](http://www.heise.de/artikel-archiv/ct/2012/10/184_kiosk)
-  - liver Lau, Web auf Speed, Schnelle 2D-Grafiken im Browser mit WebGL, [c't 11/12, S. 182](http://www.heise.de/artikel-archiv/ct/2012/11/182_kiosk)
+  - [Oliver Lau, Würze fürs Web, Verteiltes Rechnen mit JavaScript, c't 9/12, S. 190](http://www.heise.de/artikel-archiv/ct/2012/9/190_kiosk)
+  - [Oliver Lau, Mit Pfeffer und Salz, Chrome-Plug-ins mit C/C++ entwickeln, c't 10/12, S. 184](http://www.heise.de/artikel-archiv/ct/2012/10/184_kiosk)
+  - [Oliver Lau, Web auf Speed, Schnelle 2D-Grafiken im Browser mit WebGL, c't 11/12, S. 182](http://www.heise.de/artikel-archiv/ct/2012/11/182_kiosk)
